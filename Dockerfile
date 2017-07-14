@@ -17,3 +17,10 @@ RUN set -x \
 && sed --in-place "s/java version/openjdk version/g" "${JIRA_INSTALL}/bin/check-java.sh" \
 && echo -e "\njira.home=$JIRA_HOME" >> "${JIRA_INSTALL}/atlassian-jira/WEB-INF/classes/jira-application.properties" \
 && touch -d "@0" "${JIRA_INSTALL}/conf/server.xml"
+VOLUME ["/var/atlassian/application-data/jira", "/opt/atlassian/jira/logs"]
+WORKDIR /opt/atlassian/jira
+ADD build/server.xml /opt/atlassian/jira/conf
+COPY "docker-entrypoint.sh" "/"
+ENTRYPOINT ["/docker-entrypoint.sh"]
+RUN chmod +x /docker-entrypoint.sh
+EXPOSE 8085
