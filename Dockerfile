@@ -3,10 +3,10 @@ ENV JIRA_HOME /var/atlassian/application-data/jira
 ENV JIRA_INSTALL /opt/atlassian/jira
 ENV JIRA_VERSION 7.3.6
 RUN set -x \
+&& echo "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/jessie-backports.list \
 && apt-get update --quiet \
+&& apt-get install --quiet --yes --no-install-recommends xmlstarlet \
 && apt-get install --quiet --yes --no-install-recommends -t jessie-backports libtcnative-1 \
-&& apt-get install -y --quiet \
-&& apt-get install -y wget --quiet \
 && apt-get clean \
 && mkdir -p "${JIRA_HOME}" \
 && mkdir -p "${JIRA_HOME}/caches/indexes" \
