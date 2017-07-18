@@ -1,3 +1,7 @@
+FROM openjdk:8
+ENV JIRA_HOME /var/atlassian/application-data/jira
+ENV JIRA_INSTALL /opt/atlassian/jira
+ENV JIRA_VERSION 7.3.6
 RUN set -x \
 && echo "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/jessie-backports.list \
 && apt-get update --quiet \
