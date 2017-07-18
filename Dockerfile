@@ -43,5 +43,5 @@ WORKDIR /var/atlassian/jira
 
 COPY "docker-entrypoint.sh" "/"
 ENTRYPOINT ["/docker-entrypoint.sh"]
-
+RUN chmod +x /docker-entrypoint.sh
 CMD ["/opt/atlassian/jira/bin/catalina.sh", "run"]
