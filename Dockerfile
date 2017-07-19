@@ -1,7 +1,7 @@
 FROM openjdk:8
-ENV JIRA_HOME /var/atlassian/application-data/jira
+ENV JIRA_HOME /var/atlassian/jira
 ENV JIRA_INSTALL /opt/atlassian/jira
-ENV JIRA_VERSION 7.3.6
+ENV JIRA_VERSION 7.4.1
 RUN set -x \
 && echo "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/jessie-backports.list \
 && apt-get update --quiet \
@@ -28,10 +28,12 @@ RUN set -x \
 && sed --in-place "s/java version/openjdk version/g" "${JIRA_INSTALL}/bin/check-java.sh" \
 && echo -e "\njira.home=$JIRA_HOME" >> "${JIRA_INSTALL}/atlassian-jira/WEB-INF/classes/jira-application.properties" \
 && touch -d "@0" "${JIRA_INSTALL}/conf/server.xml"
-VOLUME ["/var/atlassian/application-data/jira", "/opt/atlassian/jira/logs"]
-WORKDIR /opt/atlassian/jira
-ADD build/server.xml /opt/atlassian/jira/conf
+USER daemon:daemon
+
+EXPOSE 8080
+
+VOLUME ["/var/atlassian/jira", "/opt/atlassian/jira/logs"]
+WORKDIR /var/atlassian/jira
 COPY "docker-entrypoint.sh" "/"
 ENTRYPOINT ["/docker-entrypoint.sh"]
-RUN chmod +x /docker-entrypoint.sh
-EXPOSE 8082
+CMD ["/opt/atlassian/jira/bin/catalina.sh", "run"]
