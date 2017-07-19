@@ -1,10 +1,9 @@
 FROM openjdk:8
-# Configuration variables.
+
 ENV JIRA_HOME /var/atlassian/jira
 ENV JIRA_INSTALL /opt/atlassian/jira
 ENV JIRA_VERSION 7.4.1
-# Install Atlassian JIRA and helper tools and setup initial home
-# directory structure.
+
 RUN set -x \
 && echo "deb http://ftp.debian.org/debian jessie-backports main" > /etc/apt/sources.list.d/jessie-backports.list \
 && apt-get update --quiet \
@@ -31,20 +30,15 @@ RUN set -x \
 && sed --in-place "s/java version/openjdk version/g" "${JIRA_INSTALL}/bin/check-java.sh" \
 && echo -e "\njira.home=$JIRA_HOME" >> "${JIRA_INSTALL}/atlassian-jira/WEB-INF/classes/jira-application.properties" \
 && touch -d "@0" "${JIRA_INSTALL}/conf/server.xml"
-# Use the default unprivileged account. This could be considered bad practice
-# on systems where multiple processes end up being executed by 'daemon' but
-# here we only ever run one process anyway.
 USER daemon:daemon
-# Expose default HTTP connector port.
+
 EXPOSE 8082
-# Set volume mount points for installation and home directory. Changes to the
-# home directory needs to be persisted as well as parts of the installation
-# directory due to eg. logs.
+
 VOLUME ["/var/atlassian/jira", "/opt/atlassian/jira/logs"]
-# Set the default working directory as the installation directory.
+
 WORKDIR /var/atlassian/jira
 COPY "docker-entrypoint.sh" "/"
 ENTRYPOINT ["/docker-entrypoint.sh"]
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-# Run Atlassian JIRA as a foreground process by default.
+RUN chmod +x /docker-entrypoint.sh
+
 CMD ["/opt/atlassian/jira/bin/catalina.sh", "run"]
