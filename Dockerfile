@@ -18,11 +18,13 @@ RUN curl -Ls "https://www.atlassian.com/software/jira/downloads/binary/atlassian
 RUN curl -Ls "https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.38.tar.gz" | tar -xz --directory "${JIRA_INSTALL}/lib" --strip-components=1 --no-same-owner "mysql-connector-java-5.1.38/mysql-connector-java-5.1.38-bin.jar"
 RUN sed --in-place "s/java version/openjdk version/g" "${JIRA_INSTALL}/bin/check-java.sh"
 RUN touch -d "@0" "${JIRA_INSTALL}/conf/server.xml"
-EXPOSE 8082
+
 VOLUME ["/var/atlassian/jira", "/opt/atlassian/jira/logs"]
 WORKDIR /var/atlassian/jira
+ADD build/server.xml /opt/atlassian/jira/conf
 COPY "docker-entrypoint.sh" "/"
 #ENTRYPOINT ["/docker-entrypoint.sh"]
 RUN chmod +x /docker-entrypoint.sh
+EXPOSE 8082
 #CMD ["/opt/atlassian/jira/bin/catalina.sh", "run"]
 CMD bash
